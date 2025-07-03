@@ -1,0 +1,20 @@
+.admin-section {
+    padding: var(--spacing-l);
+    background-color: var(--white);
+    border-radius: var(--border-radius-medium);
+}
+
+.section-title {
+    font-size: var(--fs-h2);
+    color: var(--dark-text);
+    margin-bottom: var(--spacing-l);
+    border-bottom: 2px solid var(--primary-purple);
+    padding-bottom: var(--spacing-xs);
+    display: inline-block;
+}
+
+.section-subtitle {
+    margin-top: -1rem;
+    margin-bottom: var(--spacing-xl);
+    color: var(--light-text);
+}

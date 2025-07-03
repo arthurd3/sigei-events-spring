@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" href="/css/myEvents.css">
+<body>
+<div th:fragment="aboutContent">
+    <section class="events-list-section">
+        <h2>Meus Ingressos</h2>
+
+        <div id="events-container" class="events-grid">
+            <p>Carregando seus eventos...</p>
+        </div>
+
+        <template id="event-card-template">
+            <div class="event-card">
+                <div class="card-image-container">
+                    <img class="card-image" src="" alt="Imagem do Evento">
+                </div>
+                <div class="card-info">
+                    <div class="card-date-box">
+                        <span class="date-day-of-week"></span>
+                        <span class="date-day-of-month"></span>
+                        <span class="date-month"></span>
+                    </div>
+                    <div class="card-details">
+                        <a href="#" class="card-title-link">
+                            <h3 class="card-title"></h3>
+                        </a>
+                        <div class="card-location">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
+                            </svg>
+                            <span></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <a href="#" class="btn download-ticket" download>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                            <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                        </svg>
+                        <span>Baixar Ingresso</span>
+                    </a>
+                </div>
+            </div>
+        </template>
+
+
+        <script th:inline="javascript" type="module">
+            document.addEventListener('DOMContentLoaded', () => {
+                const userId = /*[[${userId}]]*/ null;
+
+                if (userId) {
+                    (async () => {
+                        const container = document.getElementById('events-container');
+                        const template = document.getElementById('event-card-template');
+
+                        try {
+                            const response = await fetch(`/api/event/findJoinedUserEvents/${userId}`);
+                            if (!response.ok) {
+                                throw new Error('Falha ao buscar os dados.');
+                            }
+
+                            const events = await response.json();
+                            container.innerHTML = '';
+
+                            if (events.length === 0) {
+                                container.innerHTML = '<a href="/" class="btn">Você ainda não entrou em nenhum evento!!</a>';
+                            } else {
+                                const months = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
+                                const weekdays = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'];
+
+                                events.forEach(event => {
+                                    const cardClone = template.content.cloneNode(true);
+                                    const eventDate = new Date(event.eventDate);
+
+                                    cardClone.querySelector('.card-image').src = event.eventImage;
+                                    cardClone.querySelector('.card-image').alt = `Imagem do Evento: ${event.eventName}`;
+                                    cardClone.querySelector('.date-day-of-week').textContent = weekdays[eventDate.getDay()];
+                                    cardClone.querySelector('.date-day-of-month').textContent = eventDate.getDate();
+                                    cardClone.querySelector('.date-month').textContent = months[eventDate.getMonth()];
+                                    cardClone.querySelector('.card-title-link').href = `/evento/${event.id}`;
+                                    cardClone.querySelector('.card-title').textContent = event.eventName;
+                                    cardClone.querySelector('.card-location span').textContent = event.eventLocation;
+
+                                    const downloadButton = cardClone.querySelector('.download-ticket');
+                                    downloadButton.href = `/generate-ticket-pdf/${event.id}`;
+
+                                    const safeFileName = event.eventName.replace(/[^a-zA-Z0-9]/g, '_');
+                                    downloadButton.setAttribute('download', `Ingresso_${safeFileName}.pdf`);
+
+                                    container.appendChild(cardClone);
+                                });
+                            }
+                        } catch (error) {
+                            console.error('Erro:', error);
+                            container.innerHTML = '<p style="color: red;">Não foi possível carregar os eventos.</p>';
+                        }
+                    })();
+                } else {
+                    document.getElementById('events-container').innerHTML = '<p>Faça login para ver seus eventos.</p>';
+                }
+            });
+        </script>
+
+    </section>
+</div>
+</body>
+</html>

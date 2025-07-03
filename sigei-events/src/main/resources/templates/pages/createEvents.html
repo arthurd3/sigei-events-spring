@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Novo Evento</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="form-container" >
+
+    <div class="form-header">
+        <h1 th:if="${eventId} == 0">Crie seu Evento</h1>
+        <p th:if="${eventId} == 0">Informe os detalhes do seu evento para começar</p>
+        <h1 th:if="${eventId} != 0">Edite seu Evento</h1>
+        <p th:if="${eventId} != 0">Atualize os detalhes do seu evento</p>
+    </div>
+
+    <form th:id="${eventId} > 0 ? 'editEventForm' : 'createEventForm'" th:object="${Event}" method="POST" th:action="${eventId} > 0 ? @{'/editEvent/' + ${eventId}} : @{/registerEvent}">
+        <div class="form-group">
+            <label for="eventName">Nome do Evento</label>
+            <input type="text" th:field="*{eventName}" placeholder="Ex: Show de Rock da Primavera" required>
+        </div>
+
+        <div class="form-group">
+            <label for="eventDescription">Descrição do Evento</label>
+            <textarea th:field="*{eventDescription}" placeholder="Descreva os detalhes, atrações, e informações importantes sobre seu evento." required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="eventLocation">Localização do Evento</label>
+            <input type="text" th:field="*{eventLocation}" placeholder="Ex: Estádio do Maracanã, Rio de Janeiro - RJ" required>
+        </div>
+
+        <div class="form-group-row">
+            <div class="form-group">
+                <label for="eventType">Tipo de Evento</label>
+                <select th:field="*{eventType}" required>
+                    <option value="" disabled selected>Selecione um tipo</option>
+                    <option value="SHOW">Show</option>
+                    <option value="FESTA">Festa</option>
+                    <option value="TEATRO">Teatro</option>
+                    <option value="CURSO">Curso</option>
+                    <option value="ESPORTIVO">Esportivo</option>
+                    <option value="CONFERENCIA">Conferência</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="eventDate">Data e Hora</label>
+                <input type="date" th:field="*{eventDate}" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="eventSize">Capacidade de Público</label>
+            <input type="number" th:field="*{eventSize}" min="1" placeholder="Ex: 500" required>
+        </div>
+
+        <div class="form-group">
+            <label for="eventImage">URL da Imagem do Evento</label> <input type="text" th:field="*{eventImage}" placeholder="https://exemplo.com/imagem.png" required>
+        </div>
+
+        <div class="form-group form-submit-group">
+            <button type="submit" class="submit-btn" th:if="${eventId} == 0" >Criar Evento</button>
+            <button type="submit" class="submit-btn" th:if="${eventId} > 0" >Editar Evento</button>
+        </div>
+
+    </form>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" href="/css/home.css">
+<body>
+<div th:fragment="homeContent">
+
+  <section class="hero-section">
+    <div class="hero-content">
+      <h1>Descubra os melhores eventos perto de você</h1>
+      <p>De shows e festas a conferências e cursos, encontre o seu próximo evento aqui.</p>
+
+      <form class="search-form" action="/search" method="get">
+        <label for="searchInput" class="search-input-group">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/></svg>
+          <input type="text" id="searchInput" name="query" placeholder="Buscar por evento, artista ou local...">
+        </label>
+      </form>
+
+      <div class="quick-filters">
+        <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/></svg>Qualquer Lugar</a>
+        <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 .5-.5M8 1a3 3 0 0 0-3 3v3a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3"/></svg>Shows</a>
+        <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M9 13c0 1.105-1.12 2-2.5 2S4 14.105 4 13s1.12-2 2.5-2 2.5.895 2.5 2M9 3v10H8V3h1m.804-.98-3 .6A1 1 0 0 0 6 3.22V4a1 1 0 0 0 1 1h1V3a1 1 0 0 1 1-1z"/></svg>Festas</a>
+        <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M0 4.5A1.5 1.5 0 0 1 1.5 3h13A1.5 1.5 0 0 1 16 4.5V6a.5.5 0 0 1-.5.5 1.5 1.5 0 0 0 0 3 .5.5 0 0 1 .5.5v1.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 11.5V10a.5.5 0 0 1 .5-.5 1.5 1.5 0 1 0 0-3A.5.5 0 0 1 0 6z"/></svg>Teatro</a>
+        <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M13.5 0a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-.5.5H2.5a.5.5 0 0 1-.5-.5v-7a.5.5 0 0 1 .5-.5zM14 9H2v5a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1z"/></svg>Eventos Online</a>
+      </div>
+    </div>
+  </section>
+
+  <main class="page-content">
+    <section class="events-list-section">
+      <h2>Eventos em destaque</h2>
+      <div class="events-grid">
+        <form th:action="@{'/joinEvent/' + ${evento.id}}" method="post" th:each="evento : ${eventosDestaque}">
+          <button type="submit" class="event-card">
+            <div class="card-image-container">
+              <img th:src="${evento.eventImage}" alt="Imagem do Evento" class="card-image">
+            </div>
+            <div class="card-info">
+              <div class="card-date-box">
+                <span class="date-day-of-week" th:text="${#strings.toUpperCase(#dates.format(evento.eventDate, 'E'))}">SÁB</span>
+                <span class="date-day-of-month" th:text="${#dates.format(evento.eventDate, 'dd')}">02</span>
+                <span class="date-month" th:text="${#strings.toUpperCase(#dates.format(evento.eventDate, 'MMM'))}">AGO</span>
+              </div>
+              <div class="card-details">
+                <h3 class="card-title" th:text="${evento.eventName}">Nome do Evento Incrível</h3>
+                <p class="card-location">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
+                    <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
+                  </svg>
+                  <span th:text="${evento.eventLocation}">Local do Evento, Cidade</span>
+                </p>
+                <span class="available-vacancies"
+                      th:text="${evento.availableVacancies > 0} ?
+                'Vagas disponíveis: ' + ${evento.availableVacancies} :
+                'Vagas esgotadas'"
+                      th:classappend="${evento.availableVacancies <= 0} ? 'sold-out'">
+                </span>
+
+              </div>
+            </div>
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <section class="category-section">
+      <h2>Navegue por categorias</h2>
+      <div class="category-grid">
+        <a href="#" class="category-card" style="background-image: url('https://t4.ftcdn.net/jpg/01/99/21/01/360_F_199210113_PO4I2F3CAfEhCnVnWNveK9mlgWyxY8jn.jpg');">
+          <div class="category-card-overlay">Shows e Festivais</div>
+        </a>
+        <a href="#" class="category-card" style="background-image: url('https://portal.uniasselvi.com.br/storage/app/noticia/1711/capa/1280x962-20230327162626-27%20de%20mar%C3%A7o%20dia%20mundial%20do%20teatro.png');">
+          <div class="category-card-overlay">Teatro e Espetáculos</div>
+        </a>
+        <a href="#" class="category-card" style="background-image: url('https://revistaeducacao.com.br/wp-content/uploads/2019/07/workshop-projetos-pedagogicos.jpg');">
+          <div class="category-card-overlay">Cursos e Workshops</div>
+        </a>
+        <a href="#" class="category-card" style="background-image: url('https://www.rhacademy.com.br/wp-content/uploads/2023/12/Palestra-Como-Melhorar-a-Performance-de-Maneira-Sustentavel-jpg.webp');">
+          <div class="category-card-overlay">Congressos e Palestras</div>
+        </a>
+      </div>
+    </section>
+
+    <section class="events-list-section">
+      <h2>Todos os Eventos</h2>
+      <div class="events-grid">
+        <form th:action="@{'/joinEvent/' + ${evento.id}}" method="post" th:each="evento : ${eventos}">
+          <button type="submit" class="event-card">
+            <div class="card-image-container">
+              <img th:src="${evento.eventImage}" alt="Imagem do Evento" class="card-image">
+            </div>
+            <div class="card-info">
+              <div class="card-date-box">
+                <span class="date-day-of-week" th:text="${#strings.toUpperCase(#dates.format(evento.eventDate, 'E'))}">SÁB</span>
+                <span class="date-day-of-month" th:text="${#dates.format(evento.eventDate, 'dd')}">02</span>
+                <span class="date-month" th:text="${#strings.toUpperCase(#dates.format(evento.eventDate, 'MMM'))}">AGO</span>
+              </div>
+              <div class="card-details">
+                <h3 class="card-title" th:text="${evento.eventName}">Nome do Evento Incrível</h3>
+                <p class="card-location">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
+                    <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
+                  </svg>
+                  <span th:text="${evento.eventLocation}">Local do Evento, Cidade</span>
+                </p>
+                <span class="available-vacancies"
+                      th:text="${evento.availableVacancies > 0} ?
+                  'Vagas disponíveis: ' + ${evento.availableVacancies} :
+                  'Vagas esgotadas'"
+                      th:classappend="${evento.availableVacancies <= 0} ? 'sold-out'">
+            </span>
+              </div>
+            </div>
+          </button>
+        </form>
+      </div>
+      <a href="#" class="btn btn-primary centralize">Mais Eventos</a>
+    </section>
+
+    <section class="cta-organizer-section">
+      <div class="cta-content-wrapper">
+        <div class="cta-text-content">
+          <h2>Crie eventos, divulgue e venda ingressos com facilidade</h2>
+          <div class="cta-features">
+            <div class="cta-feature-item">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chat-square-text-fill" viewBox="0 0 16 16"><path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.5a1 1 0 0 0-.8.4l-1.9 2.533a1 1 0 0 1-1.6 0L5.3 12.4a1 1 0 0 0-.8-.4H2a2 2 0 0 1-2-2zm3.5 1a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1zm0 2.5a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1zm0 2.5a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1z"/></svg>
+              <p><strong>Da publicação à venda:</strong> suporte em todas as etapas.</p>
+            </div>
+            <div class="cta-feature-item">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-piggy-bank-fill" viewBox="0 0 16 16"><path d="M7.964 1.527c-2.977 0-5.571 1.704-6.32 4.125h-.55A1 1 0 0 0 .11 6.824l.254 1.46a1.5 1.5 0 0 0 1.478 1.243h.263c.3.513.688.978 1.145 1.382l-.729 2.477a.5.5 0 0 0 .48.641h2a.5.5 0 0 0 .471-.332l.482-1.351c.635.173 1.31.267 2.011.267.707 0 1.388-.095 2.028-.272l.543 1.372a.5.5 0 0 0 .465.316h2a.5.5 0 0 0 .478-.645l-.761-2.506C13.81 9.895 14.5 8.559 14.5 7.069q0-.218-.02-.431c.261-.11.508-.266.705-.444.315.306.815.306.815-.417 0 .223-.5.223-.461-.026a1 1 0 0 0 .09-.255.7.7 0 0 0-.202-.645.58.58 0 0 0-.707-.098.74.74 0 0 0-.375.562c-.024.243.082.48.32.654a2 2 0 0 1-.259.153c-.534-2.664-3.284-4.595-6.442-4.595m7.173 3.876a.6.6 0 0 1-.098.21l-.044-.025c-.146-.09-.157-.175-.152-.223a.24.24 0 0 1 .117-.173c.049-.027.08-.021.113.012a.2.2 0 0 1 .064.199m-8.999-.65a.5.5 0 1 1-.276-.96A7.6 7.6 0 0 1 7.964 3.5c.763 0 1.497.11 2.18.315a.5.5 0 1 1-.287.958A6.6 6.6 0 0 0 7.964 4.5c-.64 0-1.255.09-1.826.254ZM5 6.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0"/></svg>
+              <p><strong>Publicação grátis:</strong> sem taxa de adesão ou mensalidade.</p>
+            </div>
+          </div>
+          <div class="cta-buttons">
+            <a href="#" class="btn btn-primary">Crie seu evento</a>
+            <a href="#" class="btn btn-secondary">Veja como funciona</a>
+          </div>
+        </div>
+        <div class="cta-image-content">
+          <img src="/img/organizerGif.gif" alt="Dashboard de eventos em um laptop">
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+</body>
+</html>

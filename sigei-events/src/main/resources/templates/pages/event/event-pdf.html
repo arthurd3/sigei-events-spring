@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>Relatório Confidencial do Evento</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #3d4852;
+      background-color: #f4f7f9;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+
+    .header {
+      background-color: #2c3e50;
+      color: #ffffff;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 26px;
+      font-weight: 600;
+    }
+
+    .header p {
+      margin: 5px 0 0;
+      opacity: 0.85;
+      font-size: 14px;
+    }
+
+    .main-content {
+      padding: 30px;
+    }
+
+    .event-image {
+      width: 100%;
+      max-height: 280px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 30px;
+    }
+
+    h2 {
+      font-size: 19px;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-top: 35px;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e9ecef;
+    }
+    h2:first-of-type {
+      margin-top: 0;
+    }
+
+    .metrics-panel {
+      display: -webkit-box;
+      -webkit-box-pack: justify;
+      background-color: #fdfaf5;
+      border: 1px solid #f3eade;
+      border-radius: 8px;
+      padding: 25px 20px;
+      margin-top: 15px;
+      text-align: center;
+    }
+
+    .metric-box {
+      width: 24%;
+    }
+
+    .metric-box .value {
+      font-size: 26px;
+      font-weight: 700;
+      color: #e67e22;
+      margin: 0;
+    }
+
+    .metric-box .label {
+      font-size: 12px;
+      color: #9d8a70;
+      margin: 4px 0 0;
+      text-transform: uppercase;
+    }
+
+    .info-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    .info-table td {
+      padding: 14px 0;
+      border-bottom: 1px solid #f1f3f5;
+    }
+
+    .info-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .info-table td:first-child {
+      font-weight: 600;
+      width: 160px;
+      color: #7f8c8d;
+    }
+
+    .description {
+      margin-top: 20px;
+      padding: 15px 20px;
+      background-color: #f8f9fa;
+      border-left: 4px solid #e67e22;
+      white-space: pre-wrap;
+      font-style: italic;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 25px;
+      font-size: 12px;
+      color: #b0b9c2;
+      background-color: #f8f9fa;
+      border-top: 1px solid #e9ecef;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <h1>Relatório Confidencial do Evento</h1>
+    <p>Gerado em: <span th:text="${#dates.format(#dates.createNow(), 'dd/MM/yyyy HH:mm')}"></span></p>
+  </div>
+
+  <div class="main-content">
+
+    <img th:if="${event.eventImage != null}" th:src="${event.eventImage}" alt="Imagem do Evento" class="event-image"/>
+
+    <h2>📋 Informações Gerais</h2>
+    <table class="info-table">
+      <tr>
+        <td>Nome do Evento</td>
+        <td th:text="${event.eventName}">Nome do Evento de Exemplo</td>
+      </tr>
+      <tr>
+        <td>Data</td>
+        <td th:text="${#dates.format(event.eventDate, 'dd/MM/yyyy')}">01/01/2025</td>
+      </tr>
+      <tr>
+        <td>Local</td>
+        <td th:text="${event.eventLocation}">Local do Evento, Cidade</td>
+      </tr>
+      <tr>
+        <td>Tipo de Evento</td>
+        <td th:text="${event.eventType}">CONFERENCIA</td>
+      </tr>
+      <tr>
+        <td>Organizador</td>
+        <td th:text="${event.ownerName}">Nome do Organizador</td>
+      </tr>
+      <tr>
+        <td>E-mail do Organizador</td>
+        <td th:text="${event.ownerEmail}">email@organizador.com</td>
+      </tr>
+    </table>
+
+    <h2>📝 Descrição Detalhada</h2>
+    <div class="description">
+      <p th:text="${event.eventDescription}">
+        Esta é uma descrição longa e detalhada sobre o evento, explicando todos os pontos importantes, os palestrantes,
+        o cronograma e outras informações relevantes para os participantes.
+      </p>
+    </div>
+
+    <h2>📊 Métricas de Ocupação</h2>
+    <div class="metrics-panel">
+      <div class="metric-box">
+        <p class="value" th:text="${event.eventSize}">300</p>
+        <p class="label">Capacidade Total</p>
+      </div>
+      <div class="metric-box">
+        <p class="value" th:text="${event.eventSize - event.availableVacancies}">150</p>
+        <p class="label">Vagas Preenchidas</p>
+      </div>
+      <div class="metric-box">
+        <p class="value" th:text="${event.availableVacancies}">150</p>
+        <p class="label">Vagas Disponíveis</p>
+      </div>
+      <div class="metric-box">
+        <p class="value" th:text="${event.eventSize > 0 ? #numbers.formatDecimal(((event.eventSize - event.availableVacancies) * 100.0 / event.eventSize), 1, 2) + '%' : 'N/A'}">50,00%</p>
+        <p class="label">Taxa de Ocupação</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <p>Este é um documento confidencial gerado pelo sistema SIGEI Events.</p>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+.page-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.events-list-section {
+    margin-bottom: 3rem;
+}
+
+.events-list-section h2 {
+    font-size: 1.8rem;
+    color: var(--dark-text);
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid var(--primary-purple);
+    padding-bottom: 0.5rem;
+    display: inline-block;
+}
+
+.download-ticket {
+    background-color: var(--primary-purple);
+    color: white;
+    width: 100%;
+    justify-content: center;
+}
+
+.download-ticket:hover {
+    background-color: var(--hover-purple);
+}
+
+.download-ticket svg {
+    margin-right: 8px;
+}

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Gerenciamento de Eventos</title>
+  <link rel="stylesheet" href="/css/showEvents.css">
+
+  <meta name="_csrf" th:content="${_csrf.token}" th:if="${_csrf}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}" th:if="${_csrf}"/>
+</head>
+<body>
+
+<div th:fragment="showEventsContent">
+  <section class="admin-section">
+    <h2 class="section-title">Gerenciamento de Eventos (ADMIN)</h2>
+
+    <div class="events-grid">
+      <div class="event-card" th:each="event : ${allEvents}">
+        <a th:href="@{/event-details/{id}(id=${event.id})}" class="card-image-container">
+          <img th:src="${event.eventImage ?: '/images/placeholder.jpg'}" alt="Imagem do Evento" class="card-image">
+        </a>
+
+        <div class="card-info">
+          <div class="card-date-box">
+            <span class="date-day-of-week" th:text="${#strings.toUpperCase(#dates.format(event.eventDate, 'EEE'))}">QUA</span>
+            <span class="date-day-of-month" th:text="${#dates.format(event.eventDate, 'dd')}">18</span>
+            <span class="date-month" th:text="${#strings.toUpperCase(#dates.format(event.eventDate, 'MMM'))}">JUN</span>
+          </div>
+
+          <div class="card-details">
+            <a th:href="@{/event-details/{id}(id=${event.id})}" class="card-title-link">
+              <h3 class="card-title" th:text="${event.eventName}">Nome do Evento</h3>
+            </a>
+            <div class="card-location">
+              <span th:text="${event.eventLocation}">Local do Evento</span>
+            </div>
+            <div class="available-vacancies"
+                 th:if="${event.availableVacancies != null}"
+                 th:classappend="${event.availableVacancies == 0 ? 'sold-out' : ''}"
+                 th:text="${event.availableVacancies == 0 ? 'Esgotado' : event.availableVacancies + ' Vagas'}">
+              Vagas
+            </div>
+          </div>
+        </div>
+
+        <div class="card-actions">
+          <a th:href="@{/editEvent/{id}(id=${event.id})}" class="btn edit-event">
+            <span>Editar</span>
+          </a>
+          <a th:href="@{/generate-event-pdf/{id}(id=${event.id})}" class="btn report-event">
+            <span>Relatório</span>
+          </a>
+          <button type="button" class="btn delete-event btn-danger">
+            <span>Deletar</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="empty-state" th:if="${allEvents.isEmpty()}">
+        <h3>Nenhum evento encontrado.</h3>
+      </div>
+    </div>
+  </section>
+
+  <script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+      const deleteButtons = document.querySelectorAll('.delete-event');
+
+      const csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
+      const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
+
+      deleteButtons.forEach(button => {
+        button.addEventListener('click', async (e) => {
+          const eventId = e.currentTarget.dataset.eventId;
+          const eventName = e.currentTarget.dataset.eventName;
+
+          if (confirm(`Tem certeza que deseja deletar o evento "${eventName}"?`)) {
+            try {
+              const response = await fetch(`/api/event/deleteEvent/${eventId}`, {
+                method: 'DELETE',
+                headers: {
+                  ...(csrfToken && csrfHeader && { [csrfHeader]: csrfToken })
+                }
+              });
+
+              if (response.ok) {
+                alert('Evento deletado com sucesso!');
+                const cardToRemove = e.currentTarget.closest('.event-card');
+                if (cardToRemove) {
+                  cardToRemove.remove();
+                }
+              } else {
+                const errorMessage = await response.text();
+                alert(`Falha ao deletar o evento: ${errorMessage || response.statusText}`);
+              }
+            } catch (error) {
+              console.error('Erro ao deletar evento:', error);
+              alert('Ocorreu um erro de rede. Tente novamente.');
+            }
+          }
+        });
+      });
+    });
+  </script>
+</div>
+
+</body>
+</html>

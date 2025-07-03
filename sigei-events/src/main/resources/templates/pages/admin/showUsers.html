@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Meus Usuarios</title>
+    <link rel="stylesheet" href="/css/showUsers.css">
+</head>
+<body>
+<div th:fragment="aboutContent">
+    <section class="admin-section">
+        <h2 class="section-title">Gerenciamento de Usuários</h2>
+        <p class="section-subtitle">Visualize e administre todos os usuários cadastrados na plataforma.</p>
+
+        <div class="table-container">
+
+            <table class="user-table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome de Usuário</th>
+                    <th>Email</th>
+                    <th>Telefone</th>
+                    <th>Tipo</th>
+                    <th>Pontos</th>
+                    <th>Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="user : ${allUsers}">
+                    <td th:text="${user.id}">1</td>
+                    <td th:text="${user.username}">Ana Organizadora</td>
+                    <td th:text="${user.email}">ana.org@email.com</td>
+                    <td th:text="${user.phone}">21988887777</td>
+                    <td>
+                        <span class="user-role-chip" th:text="${user.userType}" th:classappend="${'role-' + #strings.toLowerCase(user.userType)}">ORGANIZER</span>
+                    </td>
+                    <td th:text="${user.points}">100</td>
+
+                    <td class="actions-cell">
+
+
+                        <a th:href="@{/edit-user/{id}(id=${user.id})}" class="btn-action btn-edit" title="Editar Usuário">Editar</a>
+                        <a th:href="@{/deleteUser/{id}(id=${user.id})}" class="btn-action btn-delete" title="Deletar Usuário">Deletar</a>
+                        <a th:href="@{/edit-password/{id}(id=${user.id})}" class="btn-action btn-edit" title="Editar Senhha"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-key-fill" viewBox="0 0 16 16">
+                            <path d="M3.5 11.5a3.5 3.5 0 1 1 3.163-5H14L15.5 8 14 9.5l-1-1-1 1-1-1-1 1-1-1-1 1H6.663a3.5 3.5 0 0 1-3.163 2M2.5 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>
+                        </svg></a>
+
+                    </td>
+                </tr>
+                <tr th:if="${allUsers.isEmpty()}">
+                    <td colspan="7" class="empty-state">Nenhum usuário encontrado.</td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </section>
+</div>
+</body>
+</html>

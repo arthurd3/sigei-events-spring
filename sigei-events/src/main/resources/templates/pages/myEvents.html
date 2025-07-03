@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Meus Eventos</title>
+    <link rel="stylesheet" href="/css/myEvents.css">
+</head>
+<body>
+<div th:fragment="aboutContent">
+    <section class="events-list-section">
+        <h2>Meus Eventos</h2>
+
+        <div id="events-container" class="events-grid">
+            <p>Carregando seus eventos...</p>
+        </div>
+
+        <template id="event-card-template">
+            <div class="event-card">
+                <div class="card-image-container">
+                    <img class="card-image" src="" alt="Imagem do Evento">
+                </div>
+                <div class="card-info">
+                    <div class="card-date-box">
+                        <span class="date-day-of-week"></span>
+                        <span class="date-day-of-month"></span>
+                        <span class="date-month"></span>
+                    </div>
+                    <div class="card-details">
+                        <a href="#" class="card-title-link">
+                            <h3 class="card-title"></h3>
+                        </a>
+                        <div class="card-location">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
+                            </svg>
+                            <span></span>
+                        </div>
+                        <div class="available-vacancies"></div>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <button class="btn edit-event">Editar</button>
+                    <button class="btn delete-event">Deletar</button>
+                    <button class="btn report-event">Relatório</button>
+                </div>
+            </div>
+        </template>
+
+        <script th:inline="javascript" type="module">
+            document.addEventListener('DOMContentLoaded', async () => {
+                const userId = /*[[${userId}]]*/ null;
+                const container = document.getElementById('events-container');
+                const template = document.getElementById('event-card-template');
+
+                if (!userId) {
+                    container.innerHTML = '<p>Faça login para ver seus eventos.</p>';
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/api/event/findOwnedEvents/${userId}`);
+                    if (!response.ok) {
+                        throw new Error('Falha ao buscar os dados.');
+                    }
+                    const events = await response.json();
+
+                    container.innerHTML = '';
+
+                    if (events.length === 0) {
+                        container.innerHTML = '<p>Você ainda não tem nenhum evento cadastrado.</p>';
+                    } else {
+                        const months = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
+                        const weekdays = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'];
+
+                        events.forEach(event => {
+                            const cardClone = template.content.cloneNode(true);
+                            const cardElement = cardClone.querySelector('.event-card');
+                            const eventDate = new Date(event.eventDate);
+
+                            cardElement.querySelector('.card-image').src = event.eventImage;
+                            cardElement.querySelector('.card-image').alt = `Imagem do Evento: ${event.eventName}`;
+                            cardElement.querySelector('.date-day-of-week').textContent = weekdays[eventDate.getUTCDay()];
+                            cardElement.querySelector('.date-day-of-month').textContent = eventDate.getUTCDate();
+                            cardElement.querySelector('.date-month').textContent = months[eventDate.getUTCMonth()];
+                            cardElement.querySelector('.card-title').textContent = event.eventName;
+                            cardElement.querySelector('.card-location span').textContent = event.eventLocation;
+                            cardElement.querySelector('.card-title-link').href = `/event/details/${event.id}`;
+
+                            const vacanciesDiv = cardElement.querySelector('.available-vacancies');
+                            if (event.availableVacancies > 0) {
+                                vacanciesDiv.textContent = `${event.availableVacancies} ${event.availableVacancies === 1 ? 'Vaga Restante' : 'Vagas Restantes'}`;
+                            } else {
+                                vacanciesDiv.textContent = 'Esgotado';
+                                vacanciesDiv.classList.add('sold-out');
+                            }
+
+                            cardElement.querySelector('.report-event').addEventListener('click', () => {
+                                window.location.href = `/generate-event-pdf/${event.id}`;
+                            });
+
+                            cardElement.querySelector('.edit-event').addEventListener('click', () => {
+                                window.location.href = `/editEvent/${event.id}`;
+                            });
+
+                            cardElement.querySelector('.delete-event').addEventListener('click', async () => {
+                                if (confirm(`Tem certeza que deseja deletar o evento "${event.eventName}"?`)) {
+                                    const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+                                    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+
+                                    const deleteResponse = await fetch(`/api/event/deleteEvent/${event.id}`, {
+                                        method: 'DELETE',
+                                        headers: { [csrfHeader]: csrfToken }
+                                    });
+
+                                    if (deleteResponse.ok) {
+                                        alert('Evento deletado com sucesso!');
+                                        cardElement.remove();
+                                    } else {
+                                        alert(`Falha ao deletar o evento: ${await deleteResponse.text()}`);
+                                    }
+                                }
+                            });
+
+                            container.appendChild(cardElement);
+                        });
+                    }
+                } catch (error) {
+                    console.error('Erro:', error);
+                    container.innerHTML = '<p style="color: red;">Não foi possível carregar os eventos.</p>';
+                }
+            });
+        </script>
+    </section>
+</div>
+</body>
+</html>

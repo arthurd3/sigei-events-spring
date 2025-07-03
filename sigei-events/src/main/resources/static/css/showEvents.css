@@ -1,0 +1,31 @@
+.admin-section {
+    padding: var(--spacing-l);
+    border-radius: var(--border-radius-medium);
+}
+
+.section-title {
+    font-size: var(--fs-h2);
+    color: var(--dark-text);
+    margin-bottom: var(--spacing-l);
+    border-bottom: 2px solid var(--primary-purple);
+    padding-bottom: var(--spacing-xs);
+    display: inline-block;
+}
+
+.section-subtitle {
+    margin-top: -1rem;
+    margin-bottom: var(--spacing-xl);
+    color: var(--light-text);
+}
+
+.card-actions .report-event {
+    background-color: var(--gray-bg);
+    color: var(--light-text);
+    border: 1px solid var(--gray-border);
+}
+
+.card-actions .report-event:hover {
+    background-color: var(--light-text);
+    color: var(--white);
+    border-color: var(--light-text);
+}

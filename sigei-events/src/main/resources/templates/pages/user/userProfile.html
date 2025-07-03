@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Perfil</title>
+    <link rel="stylesheet" href="/css/userProfile.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body>
+<div th:fragment="contentFragment">
+
+    <div class="profile-page" role="region" aria-labelledby="profile-main-title">
+        <header class="profile-header">
+            <div class="profile-cover-image">
+                <img src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=2070" alt="" role="presentation">
+            </div>
+            <div class="profile-header-content">
+                <div class="profile-avatar-wrapper">
+                    <img class="profile-avatar" src="https://img.myloview.com.br/posters/user-icon-vector-people-icon-profile-vector-icon-person-illustration-business-user-icon-users-group-symbol-male-user-symbol-700-223068883.jpg"
+                         th:alt="'Foto de perfil de ' + ${userName}">
+                </div>
+                <div class="profile-info">
+                    <h1 class="profile-name" id="profile-main-title" th:text=" '@'+ ${userName}">Ana Organizadora</h1>
+                </div>
+                <div class="profile-actions">
+                    <a th:href="@{/user/edit-profile}" class="btn btn-secondary">Editar Perfil</a>
+                    <form th:action="@{/logout}" method="post">
+                        <button type="submit" class="btn btn-danger-outline">Sair</button>
+                    </form>
+                </div>
+            </div>
+            <div class="profile-stats">
+                <div class="stat">
+                    <strong th:text="${userPoints}">0</strong>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-coin" viewBox="0 0 16 16" aria-hidden="true">
+                        <path d="M5.5 9.511c.076.954.83 1.697 2.182 1.785V12h.6v-.709c1.4-.098 2.218-.846 2.218-1.932 0-.987-.626-1.496-1.745-1.76l-.473-.112V5.57c.6.068.982.396 1.074.85h1.052c-.076-.919-.864-1.638-2.126-1.716V4h-.6v.719c-1.195.117-2.01.836-2.01 1.853 0 .9.606 1.472 1.613 1.707l.397.098v2.034c-.615-.093-1.022-.43-1.114-.9zm2.177-2.166c-.59-.137-.91-.416-.91-.836 0-.47.345-.822.915-.925v1.76h-.005zm.692 1.193c.717.166 1.048.435 1.048.91 0 .542-.412.914-1.135.982V8.518z"/>
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                        <path d="M8 13.5a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11m0 .5A6 6 0 1 0 8 2a6 6 0 0 0 0 12"/>
+                    </svg>
+                    <span>Coins</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="profile-body">
+            <main class="profile-main">
+                <nav class="profile-tabs" aria-label="Navegação do Perfil">
+                    <a href="#" class="tab-item active" aria-current="page">Visão Geral</a>
+                    <a href="#" class="tab-item">Atividade</a>
+                    <a href="#" class="tab-item">Conexões</a>
+                </nav>
+
+                <div class="profile-tab-content">
+                    <section class="card" aria-labelledby="about-me-heading">
+                        <h2 id="about-me-heading">Sobre Mim</h2>
+                        <p>JAVA joined in my life</p>
+                    </section>
+                </div>
+            </main>
+
+            <aside class="profile-sidebar">
+                <div class="card" aria-labelledby="my-badges-heading">
+                    <h3 id="my-badges-heading">Meus Distintivos</h3>
+                    <div th:if="${userBadges != null and !userBadges.isEmpty()}" class="badges-grid">
+                        <div th:each="badge : ${userBadges}" class="badge-item" th:title="${badge.getDescricao()}">
+                            <img th:src="@{'/img/badges/' + ${#strings.toLowerCase(badge.name())} + '.png'}"
+                                 th:alt="${badge.getNomeExibicao()}">
+                            <span th:text="${badge.getNomeExibicao()}"></span>
+                        </div>
+                    </div>
+                    <p th:if="${userBadges == null or userBadges.isEmpty()}">Continue participando para ganhar distintivos!</p>
+                </div>
+            </aside>
+        </div>
+    </div>
+</div>
+</body>
+</html>

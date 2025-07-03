@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Seu Ingresso - [[${event.eventName}]]</title>
+  <style>
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh;
+      padding: 1rem;
+      background-color: #f0f2f5;
+    }
+
+    .page-container {
+      width: 100%;
+      max-width: 900px;
+      margin: 2rem auto;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .ticket-wrapper {
+      display: flex;
+      flex-direction: column;
+      background-color: #ffffff;
+    }
+
+    .ticket-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 32px;
+      background: linear-gradient(135deg, #3d1d6b 0%, #5a2d91 100%);
+      color: #ffffff;
+      position: relative;
+    }
+
+
+    .ticket-header::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      right: 0;
+      height: 20px;
+      background: radial-gradient(circle at 10px 0, transparent 0, transparent 10px, #ffffff 10px);
+      background-size: 20px 20px;
+      background-repeat: repeat-x;
+    }
+
+    .logo {
+      font-weight: 800;
+      font-size: 24px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+
+    .card-type {
+      font-weight: 600;
+      font-size: 13px;
+      text-transform: uppercase;
+      padding: 6px 12px;
+      border-radius: 20px;
+      background-color: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+    }
+
+    .ticket-content {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 0;
+      min-height: 400px;
+    }
+
+    .main-details {
+      padding: 48px 32px;
+    }
+
+    .event-name h1 {
+      font-size: clamp(28px, 5vw, 48px);
+      font-weight: 900;
+      color: #3d1d6b;
+      text-transform: uppercase;
+      line-height: 1.1;
+      margin-bottom: 16px;
+      letter-spacing: -0.5px;
+    }
+
+    .event-name .underline {
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(90deg, #8e44ad, #9b59b6);
+      border-radius: 2px;
+      margin-bottom: 32px;
+    }
+
+
+    .info-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+
+    .info-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+
+    .info-item:nth-child(1)::before {
+      content: '';
+      width: 24px;
+      height: 24px;
+      background-color: #8e44ad;
+      flex-shrink: 0;
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath d='M12.75 12.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z' /%3E%3Cpath fill-rule='evenodd' d='M3.75 3A1.75 1.75 0 0 0 2 4.75v14.5c0 .966.784 1.75 1.75 1.75h16.5A1.75 1.75 0 0 0 22 19.25V4.75A1.75 1.75 0 0 0 20.25 3H3.75ZM8.25 4.5a.75.75 0 0 0-1.5 0V6a.75.75 0 0 0 1.5 0V4.5Zm7.5 0a.75.75 0 0 0-1.5 0V6a.75.75 0 0 0 1.5 0V4.5ZM3.5 9.75a.75.75 0 0 1 .75-.75h15a.75.75 0 0 1 0 1.5h-15a.75.75 0 0 1-.75-.75Zm.75 2.25a.75.75 0 0 0-.75.75v5.5c0 .414.336.75.75.75h15a.75.75 0 0 0 .75-.75v-5.5a.75.75 0 0 0-1.5 0v4.75h-13.5v-4a.75.75 0 0 0-.75-.75Z' clip-rule='evenodd' /%3E%3C/svg%3E") center/contain no-repeat;
+    }
+
+
+    .info-item:nth-child(2)::before {
+      content: ''; width: 24px; height: 24px; background-color: #8e44ad; flex-shrink: 0;
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath fill-rule='evenodd' d='M11.54 22.351l.07.04.028.016a.76.76 0 0 0 .723 0l.028-.015.071-.041a2.25 2.25 0 0 0 .286-.16c.148-.09.292-.182.43-.275a21.5 21.5 0 0 0 4.47-3.32C21.58 15.042 22.5 12.574 22.5 10.5c0-5.78-4.72-10.5-10.5-10.5S1.5 4.72 1.5 10.5c0 2.074.918 4.542 2.87 6.44a21.47 21.47 0 0 0 4.47 3.32c.137.093.282.185.43.275a2.25 2.25 0 0 0 .286.16l.07-.04.028-.016a.76.76 0 0 0 .723 0l.028.015.071.04Z' clip-rule='evenodd' /%3E%3C/svg%3E") center/contain no-repeat;
+    }
+
+
+    .info-item:nth-child(3)::before {
+      content: ''; width: 24px; height: 24px; background-color: #8e44ad; flex-shrink: 0;
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath d='M1.5 8.67v8.58a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3V8.67l-8.928 5.493a3 3 0 0 1-3.144 0L1.5 8.67Z' /%3E%3Cpath d='M22.5 6.908V6.75a3 3 0 0 0-3-3h-15a3 3 0 0 0-3 3v.158l9.714 5.978a1.5 1.5 0 0 0 1.572 0L22.5 6.908Z' /%3E%3C/svg%3E") center/contain no-repeat;
+    }
+
+    .info-item:nth-child(4)::before {
+      content: ''; width: 24px; height: 24px; background-color: #8e44ad; flex-shrink: 0;
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath fill-rule='evenodd' d='M11.54 22.351l.07.04.028.016a.76.76 0 0 0 .723 0l.028-.015.071-.041a2.25 2.25 0 0 0 .286-.16c.148-.09.292-.182.43-.275a21.5 21.5 0 0 0 4.47-3.32C21.58 15.042 22.5 12.574 22.5 10.5c0-5.78-4.72-10.5-10.5-10.5S1.5 4.72 1.5 10.5c0 2.074.918 4.542 2.87 6.44a21.47 21.47 0 0 0 4.47 3.32c.137.093.282.185.43.275a2.25 2.25 0 0 0 .286.16l.07-.04.028-.016a.76.76 0 0 0 .723 0l.028.015.071.04Z' clip-rule='evenodd' /%3E%3C/svg%3E") center/contain no-repeat;
+    }
+
+    .info-content .label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #6c757d;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .info-content .value {
+      font-size: 16px;
+      color: #212529;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+
+
+    .separator {
+      border: none;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #e9ecef, transparent);
+      margin: 24px 0;
+    }
+
+    .participant-details {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .participant-details::before {
+      content: ''; width: 24px; height: 24px; background-color: #3d1d6b; flex-shrink: 0; margin-top: 4px;
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath fill-rule='evenodd' d='M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0Zm-2.251 8.243a.75.75 0 0 0 0 1.06 8.25 8.25 0 0 0 13.502 0 .75.75 0 0 0 0-1.06Z' clip-rule='evenodd' /%3E%3C/svg%3E") center/contain no-repeat;
+    }
+
+    .participant-details .name {
+      font-size: 24px;
+      font-weight: 600;
+      color: #3d1d6b;
+      text-transform: capitalize;
+    }
+
+    .sidebar {
+      background: linear-gradient(180deg, #f8f4ff 0%, #f0e8ff 100%);
+      padding: 48px 24px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .sidebar h2 {
+      font-size: 14px;
+      color: #3d1d6b;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-bottom: 0;
+    }
+
+    .qr-code-container {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      display: inline-block;
+      margin: 0 auto;
+      margin-bottom: 0;
+    }
+
+    .qr-code {
+      width: 120px;
+      height: 120px;
+      border-radius: 8px;
+    }
+
+    .code-block {
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 8px;
+      padding: 12px;
+      backdrop-filter: blur(10px);
+      margin-bottom: 0;
+    }
+
+    .code-block .label {
+      font-size: 10px;
+      color: #6a1b9a;
+      margin-bottom: 4px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .code-block .value {
+      font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+      font-size: 16px;
+      font-weight: 700;
+      color: #3d1d6b;
+      letter-spacing: 1px;
+    }
+
+    .ticket-type-box {
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+      background-color: rgba(255, 255, 255, 0.5);
+      backdrop-filter: blur(10px);
+    }
+
+    .ticket-type-box .value {
+      font-weight: 700;
+      font-size: 12px;
+      color: #3d1d6b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .terms-section {
+      background: linear-gradient(135deg, #f8f9fa 0%, #f1f3f4 100%);
+      padding: 32px;
+      border-top: 1px solid #e9ecef;
+    }
+
+    .terms-section h2 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      text-align: center;
+      color: #495057;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .terms-section ul {
+      list-style-type: none;
+      font-size: 12px;
+      color: #6c757d;
+      line-height: 1.6;
+      columns: 2;
+      column-gap: 32px;
+    }
+
+    .terms-section ul li {
+      margin-bottom: 12px;
+      break-inside: avoid;
+      position: relative;
+      padding-left: 18px;
+    }
+
+    .terms-section ul li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      top: -1px;
+      color: #8e44ad;
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    @media (max-width: 768px) {
+      body { padding: 0.5rem; }
+      .page-container { margin: 0.5rem auto; }
+      .ticket-content { grid-template-columns: 1fr; }
+      .sidebar { border-left: none; border-top: 1px solid #e9ecef; padding: 32px 20px; }
+      .main-details, .terms-section { padding: 32px 20px; }
+      .terms-section ul { columns: 1; }
+      .ticket-header { padding: 20px; flex-direction: column; gap: 16px; text-align: center; }
+      .ticket-header::after { display: none; }
+    }
+
+    @media print {
+      body { background: #ffffff; padding: 0; }
+      .page-container { box-shadow: none; margin: 0; max-width: 100%; border-radius: 0; }
+      .terms-section { page-break-before: always; }
+      .ticket-header::after { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-container">
+  <div class="ticket-wrapper">
+    <div class="ticket-header">
+      <span class="logo" th:text="${event.ownerName}">UN Music</span>
+      <span class="card-type">Cartão de Acesso</span>
+    </div>
+
+    <div class="ticket-content">
+      <div class="main-details">
+        <div class="event-name">
+          <h1 th:text="${event.eventName}">HIPHOP - 9ª EDIÇÃO</h1>
+          <div class="underline"></div>
+        </div>
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-content">
+              <div class="label">Abertura</div>
+              <div class="value" th:text="${#dates.format(event.eventDate, 'dd/MM/yyyy HH:mm')}">14/05/2023 15:00</div>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-content">
+              <div class="label">Local</div>
+              <div class="value" th:text="${event.eventLocation}">Nome do Local</div>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-content">
+              <div class="label">Gerenciado por</div>
+              <div class="value" th:text="${event.ownerEmail}">email@doorganizador.com</div>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-content">
+              <div class="label">Endereço</div>
+              <div class="value">Av. Deusdedith Salgado, 5050 - Salvaterra, Juiz de Fora - MG</div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="separator"/>
+
+        <div class="participant-details">
+          <div class="info-content">
+            <div class="label">Participante</div>
+            <div class="name" th:text="${userName}">Arthur Campos</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar">
+        <h2>Acesso ao Evento</h2>
+        <div class="qr-code-container">
+          <img class="qr-code" th:src="@{https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={data}(data=${'Ingresso:' + ticketId})}" alt="QR Code do Ingresso" />
+        </div>
+
+        <div class="code-block">
+          <div class="label">Código da Compra</div>
+          <div class="value">STR9UFRG</div>
+        </div>
+        <div class="code-block">
+          <div class="label">Código do Ingresso</div>
+          <div class="value" th:text="${ticketId}">FY1TG3D</div>
+        </div>
+
+        <div class="ticket-type-box">
+          <div class="value">Único [Meia] 2º Lote</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="terms-section">
+    <h2>INFORMAÇÕES IMPORTANTES</h2>
+    <ul>
+      <li>Este ingresso é pessoal e intransferível.</li>
+      <li>No dia do evento, documentos de identificação poderão ser exigidos na entrada.</li>
+      <li>Compre ingressos somente em canais oficiais. Evite falsificações.</li>
+      <li>O QR Code é único e permite apenas um acesso ao evento.</li>
+      <li>Meia-entrada: é obrigatória a apresentação de documento que comprove o benefício.</li>
+      <li>Ao participar do evento, você autoriza o uso gratuito de sua imagem.</li>
+      <li>Não compartilhe seu ingresso. O acesso será concedido ao primeiro a utilizá-lo.</li>
+      <li>Cancelamentos estão sujeitos às políticas da plataforma e do evento.</li>
+    </ul>
+  </div>
+</div>
+
+</body>
+</html>
